@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TaskDto } from './task.dto';
+import { FindAllTasksDto, TaskDto } from './task.dto';
 
 @Injectable()
 export class TaskService {
@@ -8,6 +8,22 @@ export class TaskService {
   create(task: TaskDto) {
     this.tasks.push(task);
     console.log(this.tasks);
+  }
+
+  findAll(params: FindAllTasksDto): TaskDto[] {
+    return this.tasks.filter((task) => {
+      let match = true;
+
+      if (params.title != undefined && !task.title.includes(params.title)) {
+        match = false;
+      }
+
+      if (params.status != undefined && !task.status.includes(params.status)) {
+        match = false;
+      }
+
+      return match;
+    });
   }
 
   findOne(id: string): TaskDto {
@@ -28,6 +44,16 @@ export class TaskService {
       return;
     }
 
+    throw new NotFoundException('Task not found');
+  }
+
+  remove(id: string) {
+    const taskIndex = this.tasks.findIndex((t) => t.id === id);
+
+    if (taskIndex >= 0) {
+      this.tasks.splice(taskIndex, 1);
+      return;
+    }
     throw new NotFoundException('Task not found');
   }
 }

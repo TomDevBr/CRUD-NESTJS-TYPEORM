@@ -5,3 +5,8 @@ export class TaskDto {
   status: string;
   expirationDate: Date;
 }
+
+export class FindAllTasksDto {
+  title: string;
+  status: string;
+}
